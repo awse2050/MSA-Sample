@@ -24,6 +24,7 @@ public class SecondServiceController {
 
     @GetMapping("/check")
     public String check() {
+        System.out.println("check");
         return "check to the Second Service";
     }
 }
