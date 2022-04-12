@@ -1,6 +1,7 @@
 package com.example.userservice;
 
 import com.example.userservice.dto.UserDto;
+import com.example.userservice.jpa.UserEntity;
 import com.example.userservice.service.UsersService;
 import com.example.userservice.vo.Greeting;
 import com.example.userservice.vo.RequestUser;
@@ -13,8 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user-service")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -22,12 +26,12 @@ public class UserController {
     private final Greeting greeting;
     private final UsersService usersService;
 
-    @GetMapping("/user-service/health_check")
+    @GetMapping("/health_check")
     public String status() {
         return String.format("It is working User service Port Ip : %s", env.getProperty("local.server.port"));
     }
 
-    @GetMapping("/user-service/welcome")
+    @GetMapping("/welcome")
     public String welcome() {
         return greeting.getMessage();
     }
@@ -46,4 +50,25 @@ public class UserController {
         return new ResponseEntity<>(responseUser, HttpStatus.CREATED);
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<ResponseUser>> getUsers() {
+        Iterable<UserEntity> userByAll = usersService.getUserByAll();
+
+        List<ResponseUser> result = new ArrayList<>();
+
+        for (UserEntity userEntity : userByAll) {
+            result.add(new ModelMapper().map(userEntity, ResponseUser.class));
+        }
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
+        UserDto userByUserId = usersService.getUserByUserId(userId);
+
+        ResponseUser responseUser = new ModelMapper().map(userByUserId, ResponseUser.class);
+
+        return new ResponseEntity<>(responseUser, HttpStatus.OK);
+    }
 }
