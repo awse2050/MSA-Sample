@@ -21,10 +21,37 @@ spring:
             preLogger: true
             postLogger: true
       routes:
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/**
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            # 기존에는 /user-service 라는 prefix를 지정해야 했으나
+            # 위의 설정으로 기존의 prefix를 사용하지 않고도 users 만으로 호출이 되게한다.
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter # JWT Token 처리
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
           predicates:
@@ -54,3 +81,6 @@ spring:
                 baseMessage: Hi, there..
                 preLogger: true
                 postLogger: true
+
+token:
+  secret: user_token

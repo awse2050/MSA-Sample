@@ -38,3 +38,8 @@ eureka:
 
 greeting:
   message: Welcome To the Simple E-commerce
+
+# JWT Token Config
+token:
+  expiration_time: 86400000
+  secret: user_token
