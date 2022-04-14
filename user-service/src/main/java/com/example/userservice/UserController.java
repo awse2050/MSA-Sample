@@ -18,13 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user-service")
-@RequiredArgsConstructor
 public class UserController {
 
-    private final Environment env;
-    private final Greeting greeting;
-    private final UsersService usersService;
+    private Environment env;
+    private Greeting greeting;
+    private UsersService usersService;
+
+
+    public UserController(Environment env, Greeting greeting, UsersService usersService) {
+        this.env = env;
+        this.greeting = greeting;
+        this.usersService = usersService;
+    }
 
     @GetMapping("/health_check")
     public String status() {
