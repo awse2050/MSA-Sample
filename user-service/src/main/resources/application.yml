@@ -39,7 +39,12 @@ eureka:
 greeting:
   message: Welcome To the Simple E-commerce
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans
 # JWT Token Config
-token:
-  expiration_time: 86400000
-  secret: user_token
+#token:
+#  expiration_time: 86400000
+#  secret: user_token
